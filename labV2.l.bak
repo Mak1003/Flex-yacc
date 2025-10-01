@@ -1,0 +1,40 @@
+%{
+#include <stdio.h>
+#include <string.h>
+#include <math.h>
+
+int hexToDecimal(char *hex) {
+    int decimal = 0;
+    int base = 1;
+    int len = strlen(hex);
+
+    for (int i = len - 1; i >= 0; i--) {
+        if (hex[i] >= '0' && hex[i] <= '9') {
+            decimal += (hex[i] - '0') * base;
+        } else if (hex[i] >= 'A' && hex[i] <= 'F') {
+            decimal += (hex[i] - 'A' + 10) * base;
+        } else if (hex[i] >= 'a' && hex[i] <= 'f') {
+            decimal += (hex[i] - 'a' + 10) * base;
+        }
+        base *= 16;
+    }
+    return decimal;
+}
+%}
+
+HEX [0-9a-fA-F]+
+
+%%
+
+{HEX} {
+    printf("Hexadecimal: %s, Decimal: %d\n", yytext, hexToDecimal(yytext));
+}
+
+.|\n { /* Ignore other characters and newlines */ }
+
+%%
+
+int main() {
+    yylex();
+    return 0;
+}

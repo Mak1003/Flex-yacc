@@ -1,0 +1,21 @@
+%{
+int count=0;
+%}
+DIGIT [0-9]
+ALPHA [a-zA-Z]
+
+%%
+({ALPHA}|{DIGIT})*edu|EDU {count++;}
+%%
+int yywrap (){
+    return 1;
+
+}
+
+int main()
+{
+    yylex();
+    printf("Count= %d\n",count);
+    return 0;
+   
+}

@@ -1,0 +1,45 @@
+%{
+#include <stdio.h>
+#include <stdlib.h>
+
+int yylex(void);
+void yyerror(char *s) { printf("Error: %s\n", s); }
+%}
+
+%token ID NUM FOR LE GE EQ NE OR AND
+
+%%
+
+start   : FOR '(' init ';' cond ';' update ')' body
+        { printf("FOR loop parsed successfully!\n"); }
+        ;
+
+init    : ID '=' expr ;
+
+cond    : expr ;
+
+update  : expr ;
+
+expr    : NUM
+        | ID
+        | expr '+' expr
+        | expr '-' expr
+        | expr '*' expr
+        | expr '/' expr
+        | expr '<' expr
+        | expr '>' expr
+        | expr LE expr
+        | expr GE expr
+        | expr EQ expr
+        | expr NE expr
+        ;
+
+
+body    : '{' '}'
+        ;
+
+%%
+
+int main() {
+    return yyparse();
+}

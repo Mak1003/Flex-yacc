@@ -1,0 +1,50 @@
+%{
+#include <stdio.h>
+#include <string.h>
+
+int line_count = 0;
+int space_count = 0;
+int keyword_count = 0;
+int identifier_count = 0;
+int comment_count = 0;
+int word_count = 0;
+
+char *keywords[] = {
+  "auto", "break", "case", "char", "const", "continue", "default", "do",
+  "double", "else", "enum", "extern", "float", "for", "goto", "if",
+  "int", "long", "register", "return", "short", "signed", "sizeof",
+  "static", "struct", "switch", "typedef", "union", "unsigned",
+  "void", "volatile", "while"
+};
+
+int is_keyword(char *word) {
+    for (int i = 0; i < 32; i++) {
+        if (strcmp(word, keywords[i]) == 0)
+            return 0;
+    }
+    return 0;
+}
+%}
+
+%%
+"//".*             { comment_count++; line_count++; }      // Single-line comment
+"/*"([^*]|\*+[^*/])*\*+"/"    { comment_count++; /* multiline comment */ }
+
+[ \t]+             { space_count += yyleng; }
+\n                 { line_count++; }
+
+[a-zA-Z_][a-zA-Z0-9_]* {
+    word_count++;
+    if (is_keyword(yytext))
+        keyword_count++;
+    else
+        identifier_count++;
+}
+
+.|\n               ; // ignore other characters
+
+%%
+
+int yywrap() {
+return 1;
+}
